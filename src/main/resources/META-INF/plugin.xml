@@ -1,7 +1,7 @@
 <idea-plugin>
-    <id>com.ruiyu.ruiyu</id>
-    <name>FlutterJsonBeanFactory</name>
-    <vendor email="157418979@qq.com" url="https://github.com/zhangruiyu/FlutterJsonBeanFactory">ruiyu-QQGroup(963752388)</vendor>
+    <id>com.lg.FlutterJsonBeanFactory</id>
+    <name>FlutterJsonBeanFactory (LG)</name>
+    <vendor email="lg8294@qq.com" url="https://github.com/lg8294/FlutterJsonBeanFactory">lg8294</vendor>
 
     <description><![CDATA[
      <br>Json to dart beans are provided, and dart files ending in entity are provided to generate dart bean factory for use.</br>
@@ -37,18 +37,19 @@
     <depends>Dart</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>io.flutter</depends>
+    <depends>com.ruiyu.ruiyu</depends>
     <actions>
         <!-- Add your actions here -->
-        <action id="FlutterBeanFactory.ID" class="com.ruiyu.beanfactory.FlutterBeanFactoryAction"
-                text="FlutterBeanFactory"
+        <action id="LG.FlutterBeanFactory.ID" class="com.ruiyu.beanfactory.FlutterBeanFactoryAction"
+                text="FlutterBeanFactory (LG-Text)"
                 description="Dart files ending in entity generate dart bean factory for use">
             <add-to-group group-id="BuildMenu" anchor="first"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="alt j"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt shift j"/>
         </action>
 
-        <action id="FlutterBeanFactory.GenerateDartBeanFileAction"
+        <action id="LG.FlutterBeanFactory.GenerateDartBeanFileAction"
                 class="com.ruiyu.jsontodart.JsonToDartBeanAction"
-                text="Dart Bean Class File from JSON"
+                text="Dart Bean Class File from JSON (LG-Text)"
                 icon="/icons/action.png"
                 description="Generate dart bean class File from JSON">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
@@ -59,8 +60,8 @@
         <!-- Add your extensions here -->
         <postStartupActivity implementation="com.ruiyu.workers.Initializer"/>
         <applicationService serviceImplementation="com.ruiyu.setting.Settings"/>
-        <projectConfigurable groupId="tools" displayName="FlutterJsonBeanFactory"
-                             id="preferences.SingleFileExecutionConfigurable"
+        <projectConfigurable groupId="tools" displayName="FlutterJsonBeanFactory (LG)"
+                             id="lg.preferences.SingleFileExecutionConfigurable"
                              instance="com.ruiyu.setting.SettingComponent"/>
 
     </extensions>

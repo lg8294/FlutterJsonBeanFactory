@@ -20,7 +20,7 @@ import com.ruiyu.utils.executeCouldRollBackAction
 import com.ruiyu.utils.showErrorMessage
 import com.ruiyu.utils.showNotify
 
-class JsonToDartBeanAction : AnAction("JsonToDartBeanAction") {
+class JsonToDartBeanAction : AnAction("JsonToDartBeanAction (LG)") {
 
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.getData(PlatformDataKeys.PROJECT) ?: return

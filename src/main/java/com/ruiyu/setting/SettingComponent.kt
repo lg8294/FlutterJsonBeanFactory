@@ -6,7 +6,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.options.Configurable
 import javax.swing.JComponent
 
-@State(name = "FlutterJsonBeanSetting", storages = [Storage("FlutterJsonBeanSetting.xml")])
+@State(name = "FlutterJsonBeanSetting (LG)", storages = [Storage("FlutterJsonBeanSetting.xml")])
 class SettingComponent : Configurable {
     var settingLayout: SettingLayout? = null
     override fun isModified(): Boolean {

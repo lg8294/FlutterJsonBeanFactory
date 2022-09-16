@@ -16,7 +16,7 @@ import com.ruiyu.utils.showNotify
 import java.io.File
 import java.lang.RuntimeException
 
-class FlutterBeanFactoryAction : AnAction() {
+class FlutterBeanFactoryAction : AnAction("FlutterBeanFactory (LG)") {
 
     override fun actionPerformed(e: AnActionEvent) {
         generateAllFile(e.getData(PlatformDataKeys.PROJECT)!!)
