@@ -38,7 +38,7 @@
     <depends>org.jetbrains.kotlin</depends>
     <depends>io.flutter</depends>
     <!-- TODO:test conflict with ruiyu.ruiyu-->
-    <depends>com.ruiyu.ruiyu</depends>
+<!--    <depends>com.ruiyu.ruiyu</depends>-->
     <actions>
         <!-- Add your actions here -->
         <action id="com.lg.FlutterJsonBeanFactory.tool.action"
