@@ -16,7 +16,7 @@ class ClassDefinition(private val name: String, private val privateFields: Boole
                     dependenciesList.add(Dependency(k, fields[k]!!))
                 }
             }
-            return dependenciesList;
+            return dependenciesList
         }
 
     fun addField(key: String, typeDef: TypeDefinition) {
@@ -30,7 +30,7 @@ class ClassDefinition(private val name: String, private val privateFields: Boole
     override operator fun equals(other: Any?): Boolean {
         if (other is ClassDefinition) {
             if (name != other.name) {
-                return false;
+                return false
             }
             return fields.keys.firstOrNull { k ->
                 other.fields.keys.firstOrNull { ok ->
@@ -41,7 +41,7 @@ class ClassDefinition(private val name: String, private val privateFields: Boole
         return false
     }
 
-    fun _addTypeDef(typeDef: TypeDefinition, sb: StringBuffer) {
+    private fun addTypeDef(typeDef: TypeDefinition, sb: StringBuffer) {
         if (typeDef.name == "Null") {
             sb.append("dynamic")
         } else {
@@ -55,17 +55,17 @@ class ClassDefinition(private val name: String, private val privateFields: Boole
     }
 
     //字段的集合
-    val _fieldList: String
+    private val fieldList: String
         get() {
             val settings = ServiceManager.getService(Settings::class.java)
             val isOpenNullSafety = settings.isOpenNullSafety == true
             val isOpenNullAble = settings.isOpenNullAble == true
-            val prefix = if(isOpenNullSafety && !isOpenNullAble) "late " else ""
-            val suffix = if(isOpenNullSafety && isOpenNullAble) "?" else ""
+            val prefix = if (isOpenNullSafety && !isOpenNullAble) "late " else ""
+            val suffix = if (isOpenNullSafety && isOpenNullAble) "?" else ""
             return fields.keys.map { key ->
                 val f = fields[key]
                 val fieldName = fixFieldName(key, f, privateFields)
-                val sb = StringBuffer();
+                val sb = StringBuffer()
                 //如果驼峰命名后不一致,才这样
                 if (fieldName != key) {
                     sb.append("  ")
@@ -73,7 +73,7 @@ class ClassDefinition(private val name: String, private val privateFields: Boole
                 }
                 sb.append("  ")
                 sb.append(prefix)
-                _addTypeDef(f!!, sb)
+                addTypeDef(f!!, sb)
                 sb.append(suffix)
                 sb.append(" $fieldName;")
                 return@map sb.toString()
@@ -86,8 +86,17 @@ class ClassDefinition(private val name: String, private val privateFields: Boole
 //            "class $name {\n$_fieldList\n\n$_defaultPrivateConstructor\n\n$_gettersSetters\n\n$_jsonParseFunc\n\n$_jsonGenFunc\n}\n";
             ""
         } else {
-            "class $name with JsonConvert<${name}> {\n$_fieldList\n}\n";
+            "class $name with JsonConvert<${name}> {\n$fieldList\n}\n"
         }
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + privateFields.hashCode()
+        result = 31 * result + fields.hashCode()
+        result = 31 * result + dependencies.hashCode()
+        result = 31 * result + fieldList.hashCode()
+        return result
     }
 }
 
@@ -99,7 +108,7 @@ class Dependency(var name: String, var typeDef: TypeDefinition) {
         }
 
     override fun toString(): String {
-        return "name = ${name} ,typeDef = ${typeDef}"
+        return "name = $name ,typeDef = $typeDef"
     }
 }
 
@@ -111,7 +120,7 @@ class TypeDefinition(var name: String, var subtype: String? = null) {
     } else {
         isPrimitiveType("$name<${subtype!!.toUpperCaseFirstOne()}>")
     }
-    private val isPrimitiveList: Boolean
+    private val isPrimitiveList: Boolean = isPrimitive && name == "List"
 
     companion object {
         fun fromDynamic(obj: Any?): TypeDefinition {
@@ -130,16 +139,12 @@ class TypeDefinition(var name: String, var subtype: String? = null) {
         }
     }
 
-    init {
-        isPrimitiveList = isPrimitive && name == "List"
-    }
-
 
     override operator fun equals(other: Any?): Boolean {
         if (other is TypeDefinition) {
-            return name == other.name && subtype == other.subtype;
+            return (name == other.name) && (subtype == other.subtype)
         }
-        return false;
+        return false
     }
 
 

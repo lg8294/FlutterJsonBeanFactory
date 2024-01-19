@@ -41,7 +41,7 @@ object GeneratorDartClassNodeToHelperInfo {
                                         itemFileNode.firstChildNode.children().forEach { fieldWholeNode ->
                                             //如果第一个是注解,解析注解里的内容
                                             if (fieldWholeNode.elementType == DartTokenTypes.METADATA) {
-                                                val annotationWholeNode = fieldWholeNode.firstChildNode;
+                                                val annotationWholeNode = fieldWholeNode.firstChildNode
                                                 //@JSONField(name: 'app',serialize:true) 为例
                                                 if (
                                                 //@
@@ -110,8 +110,8 @@ object GeneratorDartClassNodeToHelperInfo {
                                             } else {
                                                 val isVar =
                                                     fieldWholeNode.text == "var"
-                                                fieldWholeNode.children().forEach {
-                                                    println("普通解析222 ${it.firstChildNode.text}")
+                                                fieldWholeNode.children().forEach { astNode ->
+                                                    println("普通解析222 ${astNode.firstChildNode.text}")
                                                 }
                                                 println("普通解析 $nameNode $typeNode")
                                                 //不是注解,普通解析

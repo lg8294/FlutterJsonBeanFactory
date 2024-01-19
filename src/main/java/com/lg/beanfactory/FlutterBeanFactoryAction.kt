@@ -76,6 +76,9 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
                         }
                         content.append("\n")
 
+                        if(pubSpecConfig!!.isDart3){
+                            content.append("mixin ")
+                        }
                         ////
                         content.append(
                             """class JsonConvert<T> {
@@ -86,13 +89,13 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
 
 ///
                         //tojson
-                        content.append("\n\n");
+                        content.append("\n\n")
                         content.append(
                             """  Map<String, dynamic> toJson() {
 		return _getToJson<T>(runtimeType, this);
   }"""
                         )
-                        content.append("\n\n");
+                        content.append("\n\n")
                         content.append(
                             "  static _getFromJson<T>(Type type, data, json) {\n" +
                                     "    switch (type) {"
@@ -108,13 +111,13 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
                                     "    return data as T;\n" +
                                     "  }"
                         )
-                        content.append("\n\n");
+                        content.append("\n\n")
                         content.append(
                             "  static _getToJson<T>(Type type, data) {\n" +
                                     "    switch (type) {"
                         )
-                        allClass.forEach {
-                            it.first.classes.forEach { itemFile ->
+                        allClass.forEach { pair ->
+                            pair.first.classes.forEach { itemFile ->
                                 content.append("\n      case ${itemFile.className}:\n")
                                 content.append("        return ${itemFile.className.toLowerCaseFirstOne()}ToJson(data as ${itemFile.className});")
                             }
@@ -124,7 +127,7 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
                                     "      return data as T;\n" +
                                     "    }"
                         )
-                        content.append("\n");
+                        content.append("\n")
                         //_fromJsonSingle
                         content.append(
                             "  //Go back to a single instance by type\n" +
@@ -132,7 +135,6 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
                         )
                         content.append("    String type = M.toString();\n")
                         allClass.forEach { itemClass ->
-                            val isFirstIf = allClass.indexOf(itemClass) == 0
                             itemClass.first.classes.forEach { itemFile ->
                                 content.append("    if(type == (${itemFile.className}).toString()){\n")
                                 content.append("      return ${itemFile.className}().fromJson(json);\n")
@@ -145,7 +147,7 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
                         )
 
                         //_getListFromType
-                        content.append("\n\n");
+                        content.append("\n\n")
                         content.append(
                             "  //list is returned by type\n" +
                                     "  static M _getListChildType<M>(List data) {\n"

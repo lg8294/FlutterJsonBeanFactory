@@ -84,13 +84,32 @@ fun VirtualFile?.commitContent(project: Project, content: String) {
  */
 private fun isNullSafe(map: Map<*, *>?, name: String): Boolean {
     return try {
-        val value = ((map?.get(name) as? Map<*, *>)?.get("sdk")?.toString() ?: "").replace(".", "")
+        val value = ((map?.get(name) as? Map<*, *>)?.get("sdk")?.toString() ?: "")
         if (value.contains(">=")) {
-            value.split("=").last().split("<").first().trim().toInt() >= 2120
+            val minVersion = value.split("=").last().split("<").first().trim()
+            if(minVersion.startsWith('3')) return  true
+            minVersion.replace(".","").toInt() >= 2120
         } else {
-            value.split(">").last().split("<").first().trim().toInt() > 2110
+            val minVersion = value.split(">").last().split("<").first().trim()
+            if(minVersion.startsWith('3')) return  true
+            minVersion.replace(".","").toInt() > 2110
         }
 
+    } catch (e: Exception) {
+        true
+    }
+}
+
+private fun isDart3(map: Map<*, *>?, name: String): Boolean {
+    return try {
+        val value = ((map?.get(name) as? Map<*, *>)?.get("sdk")?.toString() ?: "")
+        if (value.contains(">=")) {
+            val minVersion = value.split("=").last().split("<").first().trim()
+            minVersion.startsWith('3')
+        } else {
+            val minVersion = value.split(">").last().split("<").first().trim()
+            minVersion.startsWith('3')
+        }
     } catch (e: Exception) {
         true
     }
@@ -111,5 +130,6 @@ data class PubSpecConfig(
         val flutterJsonMap: Map<*, *>? = map[PUBSPEC_KEY] as? Map<*, *>,
         val isFlutterModule: Boolean = FlutterModuleUtils.hasFlutterModule(project),
         val isEnabled: Boolean = isOptionTrue(flutterJsonMap, PUBSPEC_ENABLE_PLUGIN_KEY),
-        val isNullSafe: Boolean = isNullSafe(map, ENVIRONMENT_KEY)
+        val isNullSafe: Boolean = isNullSafe(map, ENVIRONMENT_KEY),
+        val isDart3: Boolean = isDart3(map,ENVIRONMENT_KEY)
 )

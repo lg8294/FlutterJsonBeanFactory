@@ -11,11 +11,11 @@ import com.lg.utils.toUpperCaseFirstOne
 
 
 class ModelGenerator(
-    val collectInfo: CollectInfo,
+    private val collectInfo: CollectInfo,
     val project: Project
 ) {
-    var isFirstClass = true
-    var allClasses = mutableListOf<ClassDefinition>()
+    private var isFirstClass = true
+    private var allClasses = mutableListOf<ClassDefinition>()
 
     //parentType 父类型 是list 或者class
     private fun generateClassDefinition(
@@ -25,7 +25,6 @@ class ModelGenerator(
         parentType: String = ""
     ): MutableList<ClassDefinition> {
         val newClassName = parentName + className
-        val preName = newClassName
         if (jsonRawData is List<*>) {
             // if first element is an array, start in the first element.
             generateClassDefinition(newClassName, newClassName, jsonRawData[0]!!)
@@ -49,10 +48,10 @@ class ModelGenerator(
             keys.forEach { key ->
                 val typeDef = TypeDefinition.fromDynamic(jsonRawData[key])
                 if (typeDef.name == "Class") {
-                    typeDef.name = preName + camelCase(key as String)
+                    typeDef.name = newClassName + camelCase(key as String)
                 }
                 if (typeDef.subtype != null && typeDef.subtype == "Class") {
-                    typeDef.subtype = preName + camelCase(key as String)
+                    typeDef.subtype = newClassName + camelCase(key as String)
                 }
                 classDefinition.addField(key as String, typeDef)
             }
@@ -99,10 +98,10 @@ class ModelGenerator(
                 ?: mutableMapOf<String, Any>()
         )
         val classContent = classContentList.joinToString("\n")
-        classContentList.fold(mutableListOf<TypeDefinition>(), { acc, de ->
+        classContentList.fold(mutableListOf<TypeDefinition>()) { acc, de ->
             acc.addAll(de.fields.map { it.value })
             acc
-        })
+        }
         val stringBuilder = StringBuilder()
         //导包
         stringBuilder.append("import 'package:${pubSpecConfig?.name}/generated/json/base/json_convert_content.dart';")

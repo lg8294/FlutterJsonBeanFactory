@@ -68,7 +68,7 @@ class Log {
         log.info("${info.method} ${message?.toString() ?: "null"}")
     }
 
-    fun getInfo(): LogCallerInfo {
+    private fun getInfo(): LogCallerInfo {
         val list = Thread.currentThread().stackTrace
         val traceElement = list[if (list.size <= 4) list.size - 1 else 4]
         val method = traceElement.methodName

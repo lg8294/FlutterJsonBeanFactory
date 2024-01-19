@@ -17,7 +17,8 @@ class HelperFileGeneratorInfo(
 class HelperClassGeneratorInfo {
     //协助的类名
     lateinit var className: String
-    val fields: MutableList<Filed> = mutableListOf()
+    //属性列表
+    private val fields: MutableList<Filed> = mutableListOf()
 
 
     fun addFiled(type: String, name: String, isLate: Boolean, annotationValue: List<AnnotationValue>?) {
@@ -36,9 +37,9 @@ class HelperClassGeneratorInfo {
         return sb.toString()
     }
 
-    //生成fromjson方法
+    //生成fromJson方法
     private fun jsonParseFunc(): String {
-        val sb = StringBuffer();
+        val sb = StringBuffer()
         sb.append("\n")
         sb.append("${className.toLowerCaseFirstOne()}FromJson(${className} data, Map<String, dynamic> json) {\n")
         fields.forEach { k ->
@@ -52,11 +53,12 @@ class HelperClassGeneratorInfo {
         return sb.toString()
     }
 
+    //json解析单个属性
     private fun jsonParseExpression(filed: Filed): String {
         val type = filed.type.replace("?","")
         val name = filed.name
         //从json里取值的名称
-        val getJsonName = filed.getValueByName("name") ?: name
+        val jsonName = filed.getValueByName("name") ?: name
         //是否是list
         val isListType = isListType(type)
         return when {
@@ -64,8 +66,8 @@ class HelperClassGeneratorInfo {
             isPrimitiveType(type) -> {
                 when {
                     isListType -> {
-                        "if (json['$getJsonName'] != null) {\n" +
-                                "    data.$name = (json['$getJsonName'] as List).map((v) => ${
+                        "if (json['$jsonName'] != null) {\n" +
+                                "    data.$name = (json['$jsonName'] as List).map((v) => ${
                                     buildToType(
                                         getListSubType(type),
                                         "v"
@@ -74,13 +76,13 @@ class HelperClassGeneratorInfo {
                                 "  }"
                     }
                     type == "DateTime" -> {
-                        "if(json['$getJsonName'] != null){\n    data.$name = DateTime.parse(json['$getJsonName']);\n  }"
+                        "if(json['$jsonName'] != null){\n    data.$name = DateTime.parse(json['$jsonName']);\n  }"
                     }
                     else -> {
-                        "if (json['$getJsonName'] != null) {\n    data.$name = ${
+                        "if (json['$jsonName'] != null) {\n    data.$name = ${
                             buildToType(
                                 type,
-                                "json['$getJsonName']"
+                                "json['$jsonName']"
                             )
                         };\n  }"
                     }
@@ -89,28 +91,28 @@ class HelperClassGeneratorInfo {
             isListType -> { // list of class  //如果是list,就把名字修改成单数
                 //类名
                 val listSubType = getListSubType(type)
-                "if (json['$getJsonName'] != null) {\n" +
-                        "    data.$name = (json['$getJsonName'] as List).map((v) => ${listSubType}().fromJson(v)).toList();\n" +
+                "if (json['$jsonName'] != null) {\n" +
+                        "    data.$name = (json['$jsonName'] as List).map((v) => ${listSubType}().fromJson(v)).toList();\n" +
                         "  }"
             }
             else -> // class
-                "if (json['$getJsonName'] != null) {\n    data.$name = ${type.replace("?","")}().fromJson(json['$getJsonName']);\n  }"
+                "if (json['$jsonName'] != null) {\n    data.$name = ${type.replace("?","")}().fromJson(json['$jsonName']);\n  }"
         }
     }
 
-    //生成tojson方法
+    //生成toJson方法
     private fun jsonGenFunc(): String {
-        val sb = StringBuffer();
-        sb.append("Map<String, dynamic> ${className.toLowerCaseFirstOne()}ToJson(${className} entity) {\n");
-        sb.append("  final Map<String, dynamic> data = {};\n");
+        val sb = StringBuffer()
+        sb.append("Map<String, dynamic> ${className.toLowerCaseFirstOne()}ToJson(${className} entity) {\n")
+        sb.append("  final Map<String, dynamic> data = {};\n")
         fields.forEach { k ->
             //如果serialize不是false,那么就解析,否则不解析
             if (k.getValueByName<Boolean>("serialize") != false) {
                 sb.append("  ${toJsonExpression(k)}\n")
             }
         }
-        sb.append("  return data;\n");
-        sb.append("}");
+        sb.append("  return data;\n")
+        sb.append("}")
         return sb.toString()
 
     }
@@ -130,9 +132,9 @@ class HelperClassGeneratorInfo {
                 return when {
                     isListType && getListSubType(type) == "DateTime" -> {
                         "${thisKey}\n" +
-                                "        ${isLateCallSymbol(filed.isLate)}map((v) => v?.toString())\n" +
-                                "        ${isLateCallSymbol(filed.isLate)}toList()\n" +
-                                "        ${isLateCallSymbol(filed.isLate)}cast<String>();"
+                                "        ${getCallSymbol(filed.isLate)}map((v) => v?.toString())\n" +
+                                "        .toList()\n" +
+                                "        .cast<String>();"
                     }
                     (type == "DateTime" && isLate) -> {
                         "data['${getJsonName}'] = ${thisKey}.toString();"
@@ -148,18 +150,18 @@ class HelperClassGeneratorInfo {
                 val nullType = if (getListSubTypeCanNull(type).last() == '?') "?." else "."
                 //类名
                 val value =
-                    "$thisKey${isLateCallSymbol(filed.isLate)}map((v) => v${nullType}toJson())${isLateCallSymbol(filed.isLate)}toList()"
+                    "$thisKey${getCallSymbol(filed.isLate)}map((v) => v${nullType}toJson()).toList()"
                 // class list
                 return "data['$getJsonName'] =  $value;"
             }
             else -> {
                 // class
-                return "data['$getJsonName'] = ${thisKey}${isLateCallSymbol(filed.isLate)}toJson();"
+                return "data['$getJsonName'] = ${thisKey}${getCallSymbol(filed.isLate)}toJson();"
             }
         }
     }
 
-    private fun isLateCallSymbol(isLate: Boolean): String {
+    private fun getCallSymbol(isLate: Boolean): String {
         return if (isLate) {
             return "."
         } else "?."
@@ -197,16 +199,13 @@ class HelperClassGeneratorInfo {
 }
 
 class Filed constructor(
-    //字段类型
+    /// 字段类型
     var type: String,
-    //字段名字
+    /// 字段名字
     var name: String,
-    //是否是late修饰
+    /// 是否是late修饰
     var isLate: Boolean
 ) {
-
-    //待定
-    var isPrivate: Boolean? = null
 
     //注解的值
     var annotationValue: List<AnnotationValue>? = null

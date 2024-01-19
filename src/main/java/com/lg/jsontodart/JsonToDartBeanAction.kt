@@ -28,8 +28,7 @@ class JsonToDartBeanAction : AnAction(PLUGIN_ACTION_NAME) {
         val dataContext = event.dataContext
         val module = LangDataKeys.MODULE.getData(dataContext) ?: return
 
-        val navigatable = LangDataKeys.NAVIGATABLE.getData(dataContext)
-        val directory = when (navigatable) {
+        val directory = when (val navigatable = LangDataKeys.NAVIGATABLE.getData(dataContext)) {
             is PsiDirectory -> navigatable
             is PsiFile -> navigatable.containingDirectory
             else -> {

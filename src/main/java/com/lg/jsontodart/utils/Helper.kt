@@ -1,7 +1,6 @@
 package com.lg.jsontodart.utils
 
 import com.lg.jsontodart.TypeDefinition
-//import com.ruiyu.utils.DateUtil
 import com.lg.utils.LogUtil
 import com.lg.utils.toUpperCaseFirstOne
 import java.math.BigDecimal
@@ -152,12 +151,12 @@ fun camelCaseFirstLower(text: String): String {
 //驼峰命名
 fun fixFieldName(name: String, typeDef: TypeDefinition? = null, privateField: Boolean = false): String {
     val newName = name.replace("-", "_")
-    var properName = newName;
+    var properName = newName
     if (newName.startsWith('_') || newName.startsWith("[0-9]")) {
-        val firstCharType = typeDef?.name?.substring(0, 1)?.toLowerCase();
+        val firstCharType = typeDef?.name?.substring(0, 1)?.toLowerCase()
         properName = "$firstCharType$newName"
     }
-    val fieldName = camelCaseFirstLower(properName);
+    val fieldName = camelCaseFirstLower(properName)
     if (privateField) {
         return "_$fieldName"
     }
