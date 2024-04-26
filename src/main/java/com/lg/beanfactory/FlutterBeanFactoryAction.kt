@@ -76,7 +76,7 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
                         }
                         content.append("\n")
 
-                        if(pubSpecConfig!!.isDart3){
+                        if (pubSpecConfig!!.isDart3) {
                             content.append("mixin ")
                         }
                         ////
@@ -102,7 +102,11 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
                         )
                         allClass.forEach { itemClass ->
                             itemClass.first.classes.forEach { itemFile ->
-                                content.append("\n      case ${itemFile.className}:\n")
+                                if (pubSpecConfig.isDart3) {
+                                    content.append("\n      case const (${itemFile.className}):\n")
+                                } else {
+                                    content.append("\n      case ${itemFile.className}:\n")
+                                }
                                 content.append("        return ${itemFile.className.toLowerCaseFirstOne()}FromJson(data as ${itemFile.className}, json) as T;")
                             }
                         }
@@ -118,7 +122,11 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
                         )
                         allClass.forEach { pair ->
                             pair.first.classes.forEach { itemFile ->
-                                content.append("\n      case ${itemFile.className}:\n")
+                                if (pubSpecConfig.isDart3) {
+                                    content.append("\n      case const (${itemFile.className}):\n")
+                                } else {
+                                    content.append("\n      case ${itemFile.className}:\n")
+                                }
                                 content.append("        return ${itemFile.className.toLowerCaseFirstOne()}ToJson(data as ${itemFile.className});")
                             }
                         }
