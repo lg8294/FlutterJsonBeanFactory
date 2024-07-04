@@ -1,7 +1,8 @@
 package com.lg.ui
 
+
 import com.google.gson.*
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.InputValidator
@@ -12,6 +13,9 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.layout.CellBuilder
 import com.intellij.ui.layout.panel
+//import com.intellij.ui.dsl.builder.Cell
+//import com.intellij.ui.dsl.builder.bindSelected
+//import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBDimension
 import com.intellij.util.ui.JBEmptyBorder
 import com.lg.jsontodart.CollectInfo
@@ -217,30 +221,58 @@ fun createLinearLayoutVertical(): JPanel {
 }
 
 fun createCheckBox(): DialogPanel {
-    val isOpenNullSafety = ServiceManager.getService(Settings::class.java).isOpenNullSafety == true
+    val isOpenNullSafety = ApplicationManager.getApplication().getService(Settings::class.java).isOpenNullSafety == true
     val listCheckBox = mutableListOf<CellBuilder<JBCheckBox>?>(null, null, null)
     return panel {
         row {
-            checkBoxGroup(null) {
-                listCheckBox[0] =
-                    checkBox("null-safety", isOpenNullSafety).apply {
+            listCheckBox[0] =
+                checkBox("null-safety", isOpenNullSafety).apply {
 //                        component.isSelected = true
-                        component.addItemListener {
-                            listCheckBox[1]?.component?.isVisible = component.isSelected
-                            ServiceManager.getService(Settings::class.java).isOpenNullSafety = component.isSelected
-                        }
+                    component.addItemListener {
+                        listCheckBox[1]?.component?.isVisible = component.isSelected
+                        ApplicationManager.getApplication().getService(Settings::class.java).isOpenNullSafety =
+                            component.isSelected
                     }
-                listCheckBox[1] =
-                    checkBox(
-                        "null-able",
-                        isOpenNullSafety && ServiceManager.getService(Settings::class.java).isOpenNullAble == true
-                    ).apply {
-                        component.isVisible = isOpenNullSafety
-                        component.addItemListener {
-                            ServiceManager.getService(Settings::class.java).isOpenNullAble = component.isSelected
-                        }
+                }
+            listCheckBox[1] =
+                checkBox(
+                    "null-able",
+                    isOpenNullSafety && ApplicationManager.getApplication()
+                        .getService(Settings::class.java).isOpenNullAble == true
+                ).apply {
+                    component.isVisible = isOpenNullSafety
+                    component.addItemListener {
+                        ApplicationManager.getApplication().getService(Settings::class.java).isOpenNullAble =
+                            component.isSelected
                     }
-            }
+                }
         }
     }
 }
+
+
+//fun createCheckBox(): DialogPanel {
+//    val isOpenNullSafety = ApplicationManager.getApplication().getService(Settings::class.java).isOpenNullSafety == true
+//    val listCheckBox = mutableListOf<Cell<JBCheckBox>?>(null, null)
+//    return panel {
+//        row {
+//            listCheckBox[0] =
+//                checkBox("null-safety").bindSelected(getter = { isOpenNullSafety }, setter = { isSelected ->
+//                    listCheckBox[1]?.component?.isVisible = isSelected
+//                    ApplicationManager.getApplication().getService(Settings::class.java).isOpenNullSafety =
+//                        isSelected
+//                })
+//            listCheckBox[1] =
+//                checkBox(
+//                    "null-able",
+//
+//                    ).bindSelected(getter = {
+//                    isOpenNullSafety && ApplicationManager.getApplication()
+//                        .getService(Settings::class.java).isOpenNullAble == true
+//                }, setter = { isSelected ->
+//                    ApplicationManager.getApplication().getService(Settings::class.java).isOpenNullAble =
+//                        isSelected
+//                })
+//        }
+//    }
+//}

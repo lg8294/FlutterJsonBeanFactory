@@ -1,5 +1,6 @@
 package com.lg.utils
 
+import java.util.*
 import java.util.regex.Pattern
 
 //首字母转大写
@@ -29,7 +30,7 @@ fun String.upperCharToUnderLine(): String {
     val mc = p.matcher(this)
     var i = 0
     while (mc.find()) {
-        builder.replace(mc.start() + i, mc.end() + i, "_" + mc.group().toLowerCase())
+        builder.replace(mc.start() + i, mc.end() + i, "_" + mc.group().lowercase(Locale.getDefault()))
         i++
     }
     if ('_' == builder[0]) {
@@ -62,7 +63,7 @@ fun upperTable(str: String): String {
         // 判断首字母是否是字母
         if (ch[0] in 'a'..'z') {
             // 利用ASCII码实现大写
-            ch[0] = (ch[0].toInt() - 32).toChar()
+            ch[0] = (ch[0].code - 32).toChar()
         }
         // 添加进字符串缓存区
         sbf.append(ch)

@@ -21,19 +21,6 @@ import java.io.File
 //import io.flutter.utils.FlutterModuleUtils
 
 object FileHelpers {
-    @JvmStatic
-    fun getResourceFolder(project: Project): VirtualFile {
-        val guessProjectDir = project.guessProjectDir()
-        return guessProjectDir?.findChild("res")
-            ?: guessProjectDir!!.createChildDirectory(this, "res")
-    }
-
-    @JvmStatic
-    fun getValuesFolder(project: Project): VirtualFile {
-        val resFolder = getResourceFolder(project)
-        return resFolder.findChild("values")
-            ?: resFolder.createChildDirectory(this, "values")
-    }
 
     /**
      * 获取json_convert_content目录
@@ -164,7 +151,7 @@ object FileHelpers {
             /*it.path.endsWith("_${ServiceManager.getService(Settings::class.java).state.modelSuffix.toLowerCase()}.dart") && */
 
             it.path.contains(
-                "${project.baseDir.path}/lib"
+                "${project.basePath}/lib"
             )
         }.sortedBy {
             it.path

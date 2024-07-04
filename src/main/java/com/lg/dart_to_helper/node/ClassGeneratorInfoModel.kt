@@ -1,6 +1,9 @@
 package com.lg.dart_to_helper.node
 
-import com.lg.jsontodart.utils.*
+import com.lg.jsontodart.utils.getListSubType
+import com.lg.jsontodart.utils.getListSubTypeCanNull
+import com.lg.jsontodart.utils.isListType
+import com.lg.jsontodart.utils.isPrimitiveType
 import com.lg.utils.toLowerCaseFirstOne
 
 
@@ -17,6 +20,7 @@ class HelperFileGeneratorInfo(
 class HelperClassGeneratorInfo {
     //协助的类名
     lateinit var className: String
+
     //属性列表
     private val fields: MutableList<Filed> = mutableListOf()
 
@@ -55,7 +59,7 @@ class HelperClassGeneratorInfo {
 
     //json解析单个属性
     private fun jsonParseExpression(filed: Filed): String {
-        val type = filed.type.replace("?","")
+        val type = filed.type.replace("?", "")
         val name = filed.name
         //从json里取值的名称
         val jsonName = filed.getValueByName("name") ?: name
@@ -75,9 +79,11 @@ class HelperClassGeneratorInfo {
                                 }).toList().cast<${getListSubType(type)}>();\n" +
                                 "  }"
                     }
+
                     type == "DateTime" -> {
                         "if(json['$jsonName'] != null){\n    data.$name = DateTime.parse(json['$jsonName']);\n  }"
                     }
+
                     else -> {
                         "if (json['$jsonName'] != null) {\n    data.$name = ${
                             buildToType(
@@ -88,6 +94,7 @@ class HelperClassGeneratorInfo {
                     }
                 }
             }
+
             isListType -> { // list of class  //如果是list,就把名字修改成单数
                 //类名
                 val listSubType = getListSubType(type)
@@ -95,8 +102,14 @@ class HelperClassGeneratorInfo {
                         "    data.$name = (json['$jsonName'] as List).map((v) => ${listSubType}().fromJson(v)).toList();\n" +
                         "  }"
             }
+
             else -> // class
-                "if (json['$jsonName'] != null) {\n    data.$name = ${type.replace("?","")}().fromJson(json['$jsonName']);\n  }"
+                "if (json['$jsonName'] != null) {\n    data.$name = ${
+                    type.replace(
+                        "?",
+                        ""
+                    )
+                }().fromJson(json['$jsonName']);\n  }"
         }
     }
 
@@ -136,15 +149,19 @@ class HelperClassGeneratorInfo {
                                 "        .toList()\n" +
                                 "        .cast<String>();"
                     }
+
                     (type == "DateTime" && isLate) -> {
                         "data['${getJsonName}'] = ${thisKey}.toString();"
                     }
+
                     type == "DateTime" || type == "DateTime?" -> {
                         "data['${getJsonName}'] = ${thisKey}?.toString();"
                     }
+
                     else -> "data['$getJsonName'] = $thisKey;"
                 }
             }
+
             isListType -> {
                 //如果泛型里包含?,那么就需要?调用了
                 val nullType = if (getListSubTypeCanNull(type).last() == '?') "?." else "."
@@ -154,6 +171,7 @@ class HelperClassGeneratorInfo {
                 // class list
                 return "data['$getJsonName'] =  $value;"
             }
+
             else -> {
                 // class
                 return "data['$getJsonName'] = ${thisKey}${getCallSymbol(filed.isLate)}toJson();"
@@ -175,22 +193,27 @@ class HelperClassGeneratorInfo {
                         "        ? int.tryParse(${value})\n" +
                         "        : ${value}.toInt()"
             }
+
             typeName.equals("double", true) -> {
                 "$value is String\n" +
                         "        ? double.tryParse(${value})\n" +
                         "        : ${value}.toDouble()"
             }
+
             typeName.equals("num", true) -> {
                 "$value is String\n" +
                         "        ? num.tryParse(${value})\n" +
                         "        : $value"
             }
+
             typeName.equals("string", true) -> {
                 "${value}.toString()"
             }
+
             typeName.equals("DateTime", true) -> {
                 "DateTime.parse(${value})"
             }
+
             else -> value
         }
     }
@@ -198,7 +221,7 @@ class HelperClassGeneratorInfo {
 
 }
 
-class Filed constructor(
+class Filed(
     /// 字段类型
     var type: String,
     /// 字段名字

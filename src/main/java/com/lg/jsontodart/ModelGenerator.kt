@@ -4,8 +4,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.intellij.openapi.project.Project
 import com.lg.helper.YamlHelper
-import com.lg.utils.GsonUtil.MapTypeAdapter
 import com.lg.jsontodart.utils.camelCase
+import com.lg.utils.GsonUtil.MapTypeAdapter
 import com.lg.utils.JsonUtils
 import com.lg.utils.toUpperCaseFirstOne
 
@@ -36,10 +36,12 @@ class ModelGenerator(
                     "list" == parentType -> {
                         newClassName
                     }
+
                     isFirstClass -> {//如果是第一个类
                         isFirstClass = false
                         newClassName + collectInfo.modelSuffix().toUpperCaseFirstOne()
                     }
+
                     else -> {
                         newClassName
                     }

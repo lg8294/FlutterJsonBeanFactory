@@ -11,11 +11,10 @@ import com.lg.PLUGIN_NAME
 import com.lg.file.FileHelpers
 import com.lg.helper.YamlHelper
 import com.lg.helper.commitContent
+import com.lg.utils.showNotify
 import com.lg.utils.toLowerCaseFirstOne
 import com.lg.workers.FileGenerator
-import com.lg.utils.showNotify
 import java.io.File
-import java.lang.RuntimeException
 
 class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
 
@@ -23,6 +22,14 @@ class FlutterBeanFactoryAction : AnAction(PLUGIN_NAME) {
         generateAllFile(e.getData(PlatformDataKeys.PROJECT)!!)
 
     }
+
+//    override fun update(e: AnActionEvent) {
+//        super.update(e)
+//    }
+
+//    override fun getActionUpdateThread(){
+//
+//    }
 
     companion object {
         /**

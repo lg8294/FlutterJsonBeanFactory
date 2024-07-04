@@ -1,7 +1,10 @@
 package com.lg.jsontodart
 
-import com.intellij.openapi.components.ServiceManager
-import com.lg.jsontodart.utils.*
+import com.intellij.openapi.application.ApplicationManager
+import com.lg.jsontodart.utils.camelCase
+import com.lg.jsontodart.utils.fixFieldName
+import com.lg.jsontodart.utils.getTypeName
+import com.lg.jsontodart.utils.isPrimitiveType
 import com.lg.setting.Settings
 import com.lg.utils.toUpperCaseFirstOne
 
@@ -57,7 +60,8 @@ class ClassDefinition(private val name: String, private val privateFields: Boole
     //字段的集合
     private val fieldList: String
         get() {
-            val settings = ServiceManager.getService(Settings::class.java)
+            val settings = ApplicationManager.getApplication()
+                .getService(Settings::class.java)// ServiceManager.getService(Settings::class.java)
             val isOpenNullSafety = settings.isOpenNullSafety == true
             val isOpenNullAble = settings.isOpenNullAble == true
             val prefix = if (isOpenNullSafety && !isOpenNullAble) "late " else ""

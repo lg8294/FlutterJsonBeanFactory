@@ -3,10 +3,12 @@ package com.lg.setting
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.JBDimension
+import com.intellij.util.ui.JBUI
 import com.lg.utils.addComponentIntoVerticalBoxAlignmentLeft
 import java.awt.BorderLayout
-import javax.swing.*
-import javax.swing.border.EmptyBorder
+import javax.swing.BoxLayout
+import javax.swing.JComponent
+import javax.swing.JPanel
 
 
 class SettingLayout(settingState: Settings) {
@@ -17,7 +19,7 @@ class SettingLayout(settingState: Settings) {
 
         val beanNameLayout = createLinearLayoutVertical()
         val beanName = JBLabel()
-        beanName.border = EmptyBorder(5, 0, 5, 0)
+        beanName.border = JBUI.Borders.empty(5, 0)
         beanName.text = "model suffix"
         beanNameLayout.addComponentIntoVerticalBoxAlignmentLeft(beanName)
         beanNameTextField = JBTextField(settingState.modelSuffix)
@@ -28,10 +30,10 @@ class SettingLayout(settingState: Settings) {
         panel.add(beanNameLayout, BorderLayout.NORTH)
 
         val label1 = JBLabel()
-        label1.border = EmptyBorder(5, 0, 5, 0)
+        label1.border = JBUI.Borders.empty(5, 0)
         label1.text = "Configure scan suffix files(Please separate them with commas)"
         beanNameLayout.addComponentIntoVerticalBoxAlignmentLeft(
-                label1
+            label1
         )
         panel.add(createLinearLayoutVertical(), BorderLayout.AFTER_LAST_LINE)
     }

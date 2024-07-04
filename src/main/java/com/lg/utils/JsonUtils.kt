@@ -20,6 +20,7 @@ class JsonUtils {
                     }
                     return returnData
                 }
+
                 is List<*> -> {
                     if (data.isEmpty()) return listOf<String>()
                     return if (data.first() is Map<*, *>) {
@@ -38,6 +39,7 @@ class JsonUtils {
                     }
 
                 }
+
                 else -> {
                     return data
                 }

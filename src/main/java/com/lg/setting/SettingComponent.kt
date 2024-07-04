@@ -1,6 +1,6 @@
 package com.lg.setting
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.options.Configurable
@@ -9,13 +9,14 @@ import javax.swing.JComponent
 
 @State(name = settingName, storages = [Storage(settingStorageName)])
 class SettingComponent : Configurable {
-    var settingLayout: SettingLayout? = null
+    private var settingLayout: SettingLayout? = null
     override fun isModified(): Boolean {
         if (settingLayout == null) {
             return false
         }
         return getSettings() != Settings(
-                settingLayout!!.getModelSuffix(),null,false)
+            settingLayout!!.getModelSuffix(), null, false
+        )
     }
 
     override fun getDisplayName(): String {
@@ -37,7 +38,7 @@ class SettingComponent : Configurable {
     }
 
     private fun getSettings(): Settings {
-        return ServiceManager.getService(Settings::class.java).state
+        return ApplicationManager.getApplication().getService(Settings::class.java).state
     }
 
 }

@@ -4,6 +4,7 @@ import com.lg.jsontodart.TypeDefinition
 import com.lg.utils.LogUtil
 import com.lg.utils.toUpperCaseFirstOne
 import java.math.BigDecimal
+import java.util.*
 
 private val PRIMITIVE_TYPES = mapOf(
     "int" to true,
@@ -48,6 +49,7 @@ fun getListSubType(typeName: String): String {
         "List<Null>" to "dynamic"
     )[newTypeName] ?: newTypeName.substringAfter("<").substringBefore(">")
 }
+
 fun getListSubTypeCanNull(typeName: String): String {
     return mapOf(
         "List<num?>" to "num",
@@ -69,6 +71,7 @@ fun isListType(typeName: String): Boolean {
         newTypeName.contains("List<") -> {
             true
         }
+
         else -> {
             newTypeName == "List"
         }
@@ -116,8 +119,8 @@ fun camelCase(init: String): String {
     val ret = StringBuilder(newInit.length)
     for (word in newInit.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
         if (word.isNotEmpty()) {
-            ret.append(word.substring(0, 1).toUpperCase())
-            ret.append(word.substring(1).toLowerCase())
+            ret.append(word.substring(0, 1).uppercase(Locale.getDefault()))
+            ret.append(word.substring(1).lowercase(Locale.getDefault()))
         }
         if (ret.length != newInit.length)
             ret.append(" ")
@@ -141,9 +144,9 @@ fun camelCaseFirstLower(text: String): String {
         text
     }
     if (camelCaseText.length == 1) {
-        return camelCaseText.toLowerCase()
+        return camelCaseText.lowercase(Locale.getDefault())
     }
-    val firstChar = camelCaseText.substring(0, 1).toLowerCase()
+    val firstChar = camelCaseText.substring(0, 1).lowercase(Locale.getDefault())
     val rest = camelCaseText.substring(1)
     return "$firstChar$rest"
 }
@@ -153,7 +156,7 @@ fun fixFieldName(name: String, typeDef: TypeDefinition? = null, privateField: Bo
     val newName = name.replace("-", "_")
     var properName = newName
     if (newName.startsWith('_') || newName.startsWith("[0-9]")) {
-        val firstCharType = typeDef?.name?.substring(0, 1)?.toLowerCase()
+        val firstCharType = typeDef?.name?.substring(0, 1)?.lowercase(Locale.getDefault())
         properName = "$firstCharType$newName"
     }
     val fieldName = camelCaseFirstLower(properName)
@@ -166,7 +169,7 @@ fun fixFieldName(name: String, typeDef: TypeDefinition? = null, privateField: Bo
 fun filedKeywordRename(key: String): String {
     var notKeyWord = key
     //关键字的修改字段名
-    if (dartKeyword.contains(key.toLowerCase()) || key.first().isDigit()) {
+    if (dartKeyword.contains(key.lowercase(Locale.getDefault())) || key.first().isDigit()) {
         notKeyWord = "x${key.toUpperCaseFirstOne()}"
     }
     return notKeyWord

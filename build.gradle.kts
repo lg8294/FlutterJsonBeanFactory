@@ -1,13 +1,19 @@
-import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-fun properties(key: String) = project.findProperty(key).toString()
+import org.jetbrains.changelog.markdownToHTML
 
+fun properties(key: String) = project.findProperty(key).toString()
+buildscript {
+    repositories{
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
 plugins {
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.5.31"
+    id("org.jetbrains.kotlin.jvm") version "1.9.22"
     // Gradle IntelliJ Plugin
     id("org.jetbrains.intellij") version "1.4.0"
     // Gradle Changelog Plugin
@@ -20,6 +26,8 @@ version = properties("pluginVersion")
 // Configure project's dependencies
 repositories {
     mavenCentral()
+    google()
+    gradlePluginPortal()
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
@@ -34,6 +42,14 @@ intellij {
     plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
 }
 
+//dependencies {
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
+//    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
+//    implementation("org.apache.commons:commons-lang3:3.12.0")
+//    implementation("org.jetbrains:annotations:19.0.0")
+//    implementation("org.yaml:snakeyaml:1.29")
+//}
+
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
     version.set(properties("pluginVersion"))
@@ -41,6 +57,9 @@ changelog {
 }
 
 tasks {
+    withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
     // Set the JVM compatibility versions
     properties("javaVersion").let {
         withType<JavaCompile> {
@@ -111,14 +130,6 @@ tasks {
     }
 }
 
-
-//dependencies {
-//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31")
-//    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
-//    implementation("org.jetbrains:annotations:19.0.0")
-//    implementation("org.yaml:snakeyaml:1.29")
-//}
-
 fun itemPlugin(startName: String): String =
     intellij.plugins.get().first { it.toString().contains(startName) }.toString()
 println(
@@ -130,14 +141,3 @@ println("Until: ${properties("pluginUntilBuild")}")
 println("Dart: ${itemPlugin("Dart")}")
 println("Flutter: ${itemPlugin("flutter")}")
 println("Artifacts output directory: ${rootProject.buildDir}\n")
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}

@@ -16,7 +16,4 @@ object LogUtil {
         LoggerRt.getInstance(PLUGIN_NAME).warn(warning)
     }
 
-    fun e(message: String, e: Throwable) {
-        LoggerRt.getInstance(PLUGIN_NAME).error(message, e)
-    }
 }

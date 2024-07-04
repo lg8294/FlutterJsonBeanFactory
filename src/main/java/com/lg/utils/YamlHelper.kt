@@ -9,6 +9,7 @@ import io.flutter.pub.PubRoot
 import io.flutter.utils.FlutterModuleUtils
 import org.yaml.snakeyaml.Yaml
 import java.io.FileInputStream
+import java.util.*
 
 object YamlHelper {
 
@@ -48,14 +49,8 @@ object YamlHelper {
  * 如果没有配置,那么默认是true
  */
 private fun isOptionTrue(map: Map<*, *>?, name: String): Boolean {
-    val value = map?.get(name)?.toString()?.toLowerCase() ?: "true"
+    val value = map?.get(name)?.toString()?.lowercase(Locale.getDefault()) ?: "true"
     return "true" == value
-}
-
-@Suppress("SameParameterValue")
-private fun isOptionFalse(map: Map<*, *>?, name: String): Boolean {
-    val value = map?.get(name)?.toString()?.toLowerCase()
-    return "false" == value
 }
 
 

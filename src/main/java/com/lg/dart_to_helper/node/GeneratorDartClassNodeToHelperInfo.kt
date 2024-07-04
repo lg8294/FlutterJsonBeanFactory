@@ -17,7 +17,7 @@ object GeneratorDartClassNodeToHelperInfo {
         val imports: MutableList<String> = mutableListOf()
         file.children.forEach {
             val text = it.text
-            val classNode = it?.node
+            val classNode = it.node
             //是类
             if (classNode?.elementType == DartTokenTypes.CLASS_DEFINITION && (text.contains("with") || text.contains("extends")) && text.contains(
                     "JsonConvert<"
@@ -75,6 +75,7 @@ object GeneratorDartClassNodeToHelperInfo {
                                                                                                         ""
                                                                                                     ).replace("\"", "")
                                                                                             }
+
                                                                                             DartTokenTypes.STRING_LITERAL_EXPRESSION -> {
                                                                                                 annotationValue =
                                                                                                     onlyItemNamedArgumentValueDataNode.text.replace(
@@ -82,6 +83,7 @@ object GeneratorDartClassNodeToHelperInfo {
                                                                                                         ""
                                                                                                     ).replace("\"", "")
                                                                                             }
+
                                                                                             DartTokenTypes.LITERAL_EXPRESSION -> {
                                                                                                 annotationValue =
                                                                                                     (onlyItemNamedArgumentValueDataNode.text == "true")
@@ -119,9 +121,11 @@ object GeneratorDartClassNodeToHelperInfo {
                                                     fieldWholeNode.text == "late" || fieldWholeNode.text == "=" -> {
                                                         isLate = true
                                                     }
+
                                                     fieldWholeNode.elementType == DartTokenTypes.TYPE || isVar -> {
                                                         typeNode = fieldWholeNode.text
                                                     }
+
                                                     fieldWholeNode.elementType == DartTokenTypes.COMPONENT_NAME -> {
                                                         nameNode = fieldWholeNode.text
                                                     }
